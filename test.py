@@ -1,114 +1,56 @@
-'''import tensorflow as tf
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import os
-#data pre-pocceing
-data = pd.read_csv("data\clothing-dataset\images.csv")
-#print(data.head())
-#1.load csv into a dataframe
-#2.remove unrellevt coulums
-#3.remove rows with undefind lable
-#4.create dataset of images and labels
-#4.1.create tensor of the data
-#4.1.1.find out how to load an image to tensorflow
-#4.2.replace serial numbers with images
-
-data = data.drop('sender_id', 1)
-data = data.drop('kids', 1)
-print(data.head())
-
-print(data[data['label']=='Not sure'].count())
-data = data[data.label != 'Not sure']
-print(data.head())
-print(data[data['label']=='Not sure'].count())
-
-print(data.shape)
-
-labels = list(data['label'].unique())
-print(labels)
-#loading an image to tensorflow
-# new_path = "./data/clothing-dataset/images/ea7b6656-3f84-4eb3-9099-23e623fc1018.jpg"
-# load_image = tf.keras.preprocessing.image.load_img(os.path.join(new_path))
-# print(load_image)
-
-#for image_str in data["image"]:
-    # image_str = image_str + '.jpg'
-    # new_path = "./data/clothing-dataset/images/" + image_str
-    # load_image = tf.keras.preprocessing.image.load_img(os.path.join(new_path))
-    # print(load_image)
-
-repl={}
-for i in range(len(labels)):
-    repl[labels[i]]=i
-print(repl)
-
-model = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=(28, 28)),
-    tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dense(10)
-])
-model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy'])
-model.fit(train_images, train_labels, epochs=20)'''
-
-
-'''temperature = int(input("please enter the temprature")
-if temperature <= 20:
-    print("You should take this item")
-else:
-    print("You shouldn't take this item")'''
-#we need to connect between the part of the classification and the part of the temprature'''
-
-
-
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
-#data prepocceing
+
+#data pre - processing
+#1.load csv into a dataframe
 data = pd.read_csv("./data/clothing-dataset/images.csv")
+
+#2.remove unrellevt coulums
 print(data.head())
 data = data.drop('sender_id', 1)
 data = data.drop('kids', 1)
 print(data.head())
 
+#3.remove rows with undefind lable
 print(data[data['label']=='Not sure'].count())
 data = data[data.label != 'Not sure']
 print(data.head())
-print(data[data['label']=='Not sure'].count())
-#1.load csv into a dataframe
-#2.remove unrellevt coulums
-#3.remove rows with undefind lable
+print(data[data['label']=='Not sure'].count())  #FIXME: remove also 'Other' label.
+
 #4.create dataset of images and labels
 #4.1.create tensor of the data
 #4.2.replace serial numbers with images
-labels = list(data['label'].unique())
-print(labels)
+
 
 #loading an image to tensorflow
 new_path = "./data/clothing-dataset/images/0a3e62e3-fac5-4648-9da2-f6bc4074ee31.jpg"
 load_image = tf.keras.preprocessing.image.load_img(os.path.join(new_path))
 print(load_image)
+
 max_size_l=[]
 for image_str in data["image"]:
     image_str_with_sofix = image_str + '.jpg'
     new_path = "./data/clothing-dataset/images/" + image_str_with_sofix
     try:
         #load_image = tf.keras.preprocessing.image.load_img(os.path.join(new_path))
-        load_image = tf.io.read_file(filename=new_path)
-        load_image = tf.image.decode_jpeg(load_image, channels=3)  # or decode_png
+        load_image = tf.io.read_file(filename=new_path) # loading image to a variable
+        load_image = tf.image.decode_jpeg(load_image, channels=3)  # transforming the image to a tensor
         max_size_l.append(load_image.shape)
-
         #print(load_image)
+        #FIXME: add all tensors to df.
     except :
         data = data[data.label != image_str]
         continue
-print(max_size_l)
-print(max(max_size_l))
+
+# print(max_size_l)
+# print(max(max_size_l)) #TODO: add me later
+
+labels = list(data['label'].unique())
+print(labels)
 repl={}
 for i in range(len(labels)):
     repl[labels[i]]=i
